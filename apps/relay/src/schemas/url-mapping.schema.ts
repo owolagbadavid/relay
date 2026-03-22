@@ -3,7 +3,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 
 export type UrlMappingDocument = HydratedDocument<UrlMapping>;
 
-@Schema()
+@Schema({ timestamps: true })
 export class UrlMapping {
   @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } })
   user!: mongoose.Types.ObjectId;

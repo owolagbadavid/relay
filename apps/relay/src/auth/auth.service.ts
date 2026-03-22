@@ -16,7 +16,7 @@ export class AuthService {
     const user = await this.userModel.findOneAndUpdate(
       { email },
       { email },
-      { upsert: true, new: true },
+      { upsert: true, returnDocument: 'after' },
     );
 
     return await this.jwtService.signAsync(
