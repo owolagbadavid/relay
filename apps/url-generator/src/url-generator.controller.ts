@@ -13,6 +13,19 @@ class Hero {
   name!: string;
 }
 
+class StringValue {
+  value?: string;
+}
+
+class ShortUrlRequest {
+  customUrl?: StringValue;
+}
+
+class ShortUrlResponse {
+  id!: number;
+  shortUrl!: string;
+}
+
 @Controller()
 export class UrlGeneratorController {
   constructor(private readonly urlGeneratorService: UrlGeneratorService) {}
@@ -42,5 +55,13 @@ export class UrlGeneratorController {
     }
 
     return item;
+  }
+
+  @GrpcMethod('ShortUrlService', 'GetShortUrl')
+  getShortUrl(data: ShortUrlRequest): ShortUrlResponse {
+    return {
+      id: 1,
+      shortUrl: data.customUrl?.value ?? 'generated-short-url',
+    };
   }
 }

@@ -17,11 +17,17 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
-      package: 'test',
-      protoPath: join(__dirname, 'proto/test.proto'),
+      package: ['test', 'shorturl'],
+      protoPath: [
+        join(__dirname, 'proto/test.proto'),
+        join(__dirname, 'proto/shorturl.proto'),
+      ],
       url: grpcUrl,
       onLoadPackageDefinition: (pkg, server) => {
         new ReflectionService(pkg).addToServer(server);
+      },
+      loader: {
+        includeDirs: [join(__dirname, 'proto')],
       },
     },
   });

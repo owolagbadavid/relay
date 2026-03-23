@@ -4,14 +4,14 @@ package shorturl;
 import "google/protobuf/wrappers.proto";
 
 service ShortUrlService {
-  rpc GetShortUrl(ShortUrlRequest) returns (ShortUrlRequest) {}
+  rpc GetShortUrl(ShortUrlRequest) returns (ShortUrlResponse) {}
 }
 
 message ShortUrlRequest {
   google.protobuf.StringValue custom_url  = 1;
 }
 
-message ShortUrlRequest {
+message ShortUrlResponse {
   int32 id = 1;
   string short_url = 2;
 }
