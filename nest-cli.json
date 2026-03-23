@@ -3,6 +3,7 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "apps/relay/src",
   "compilerOptions": {
+    "assets": ["**/*.proto"],
     "deleteOutDir": true,
     "webpack": true,
     "tsConfigPath": "apps/relay/tsconfig.app.json"

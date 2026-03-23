@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package shorturl;
+import "google/protobuf/wrappers.proto";
+
+service ShortUrlService {
+  rpc GetShortUrl(ShortUrlRequest) returns (ShortUrlRequest) {}
+}
+
+message ShortUrlRequest {
+  google.protobuf.StringValue custom_url  = 1;
+}
+
+message ShortUrlRequest {
+  int32 id = 1;
+  string short_url = 2;
+}
