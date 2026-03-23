@@ -1,6 +1,6 @@
 import { Column, Index, PrimaryGeneratedColumn } from 'typeorm';
 
-export class Key {
+export class ShortUrl {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   id!: number;
 
@@ -10,4 +10,7 @@ export class Key {
 
   @Column()
   lockedUntil: Date | null = null;
+
+  @Column()
+  isInUse: boolean = false;
 }
