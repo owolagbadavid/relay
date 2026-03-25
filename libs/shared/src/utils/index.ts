@@ -1,4 +1,6 @@
 import type { Response } from 'express';
+import { QueryFailedError } from 'typeorm';
+import { DatabaseError } from 'pg-protocol';
 
 export function cookie(
   res: Response,
@@ -35,3 +37,7 @@ export function intToBase62Fixed(num: number, length = 6) {
   }
   return base62.padStart(length, '0');
 }
+
+export const isQueryFailedError = (
+  err: unknown,
+): err is QueryFailedError & DatabaseError => err instanceof QueryFailedError;
