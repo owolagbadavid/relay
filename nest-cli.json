@@ -3,7 +3,13 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "apps/relay/src",
   "compilerOptions": {
-    "assets": ["**/*.proto"],
+    "assets": [
+      "**/*.proto",
+      {
+        "include": "../../../libs/shared/proto/**/*.proto",
+        "outDir": "dist/apps/relay/proto"
+      }
+    ],
     "deleteOutDir": true,
     "webpack": true,
     "tsConfigPath": "apps/relay/tsconfig.app.json"
@@ -15,6 +21,12 @@
       "entryFile": "main",
       "sourceRoot": "apps/relay/src",
       "compilerOptions": {
+        "assets": [
+          {
+            "include": "../../../libs/shared/proto/**/*.proto",
+            "outDir": "dist/apps/relay/proto"
+          }
+        ],
         "tsConfigPath": "apps/relay/tsconfig.app.json"
       }
     },
@@ -33,6 +45,13 @@
       "entryFile": "main",
       "sourceRoot": "apps/url-generator/src",
       "compilerOptions": {
+        "assets": [
+          "**/*.proto",
+          {
+            "include": "../../../libs/shared/proto/**/*.proto",
+            "outDir": "dist/apps/url-generator/proto"
+          }
+        ],
         "tsConfigPath": "apps/url-generator/tsconfig.app.json"
       }
     }

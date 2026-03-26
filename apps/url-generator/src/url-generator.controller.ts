@@ -1,17 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
-import { GrpcMethod, RpcException } from '@nestjs/microservices';
-import type { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
+// import { GrpcMethod, RpcException } from '@nestjs/microservices';
+// import type { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
 import { UrlGeneratorService } from './url-generator.service';
-import { status } from '@grpc/grpc-js';
-
-class HeroById {
-  id!: number;
-}
-
-class Hero {
-  id!: number;
-  name!: string;
-}
 
 @Controller()
 export class UrlGeneratorController {
@@ -22,25 +12,25 @@ export class UrlGeneratorController {
     return this.urlGeneratorService.getHello();
   }
 
-  @GrpcMethod('HeroesService', 'FindOne')
-  findOne(
-    data: HeroById,
-    metadata: Metadata,
-    call: ServerUnaryCall<any, any>,
-  ): Hero {
-    const items = [
-      { id: 1, name: 'John' },
-      { id: 2, name: 'Doe' },
-    ];
-    const item = items.find(({ id }) => id === data.id);
+  // @GrpcMethod('HeroesService', 'FindOne')
+  // findOne(
+  //   data: HeroById,
+  //   metadata: Metadata,
+  //   call: ServerUnaryCall<any, any>,
+  // ): Hero {
+  //   const items = [
+  //     { id: 1, name: 'John' },
+  //     { id: 2, name: 'Doe' },
+  //   ];
+  //   const item = items.find(({ id }) => id === data.id);
 
-    if (!item) {
-      throw new RpcException({
-        code: status.NOT_FOUND,
-        message: `Hero ${data.id} not found`,
-      });
-    }
+  //   if (!item) {
+  //     throw new RpcException({
+  //       code: status.NOT_FOUND,
+  //       message: `Hero ${data.id} not found`,
+  //     });
+  //   }
 
-    return item;
-  }
+  //   return item;
+  // }
 }

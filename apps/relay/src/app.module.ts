@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ShortUrlModule } from './short-url/short-url.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
+    ShortUrlModule,
   ],
   controllers: [AppController],
   providers: [AppService],

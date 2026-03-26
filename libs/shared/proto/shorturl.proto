@@ -8,7 +8,7 @@ service ShortUrlService {
 }
 
 message ShortUrlRequest {
-  google.protobuf.StringValue custom_url  = 1;
+  google.protobuf.StringValue custom_url = 1;
 }
 
 message ShortUrlResponse {
