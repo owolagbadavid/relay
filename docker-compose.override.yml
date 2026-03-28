@@ -1,0 +1,14 @@
+services:
+  relay:
+    build:
+      target: dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  url-generator:
+    build:
+      target: dev
+    volumes:
+      - .:/app
+      - /app/node_modules

@@ -1,5 +1,6 @@
-import { Column, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class ShortUrl {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   id!: number;
@@ -8,9 +9,6 @@ export class ShortUrl {
   @Column({ length: 8 })
   key!: string;
 
-  @Column()
+  @Column({ nullable: true, type: 'timestamptz' })
   lockedUntil: Date | null = null;
-
-  @Column()
-  isInUse: boolean = false;
 }

@@ -1,0 +1,21 @@
+services:
+  relay:
+    build:
+      context: .
+      dockerfile: apps/relay/Dockerfile
+      target: production
+    env_file: .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      url-generator:
+        condition: service_started
+
+  url-generator:
+    build:
+      context: .
+      dockerfile: apps/url-generator/Dockerfile
+      target: production
+    env_file: .env
+    ports:
+      - "5001:5001"

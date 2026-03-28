@@ -10,7 +10,11 @@ const client = ClientsModule.registerAsync([
     imports: [ConfigModule],
     useFactory: (config: ConfigService) => ({
       transport: Transport.RMQ,
-      url: config.getOrThrow<string>('RMQ_URL'),
+      options: {
+        urls: [config.getOrThrow<string>('RMQ_URL')],
+        queue: 'main',
+        queueOptions: { durable: true },
+      },
     }),
   },
 ]);

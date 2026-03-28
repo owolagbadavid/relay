@@ -20,12 +20,13 @@ export class TasksService {
 
   @Cron(process.env.SHORT_URL_CRON ?? '45 * * * * *')
   async handleCron() {
-    const batchSize = this.config.get<number>('SHORT_URL_BATCH_SIZE') ?? 400;
-    const minPool = this.config.get<number>('SHORT_URL_MIN_POOL_SIZE') ?? 1000;
+    const batchSize = Number(this.config.get('SHORT_URL_BATCH_SIZE')) || 400;
+    const minPool = Number(this.config.get('SHORT_URL_MIN_POOL_SIZE')) || 1000;
 
-    const unusedCount = await this.shortUrlRepo.count({
-      where: { isInUse: false },
-    });
+    const unusedCount = await this.shortUrlRepo
+      .createQueryBuilder('s')
+      .where('s.locked_until IS NULL OR s.locked_until <= NOW()')
+      .getCount();
 
     if (unusedCount >= minPool) {
       this.logger.debug(

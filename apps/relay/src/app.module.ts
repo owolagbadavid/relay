@@ -6,9 +6,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ShortUrlModule } from './short-url/short-url.module';
+import { SharedModule } from '@lib/shared';
+import { RedirectModule } from './redirect/redirect.module';
 
 @Module({
   imports: [
+    SharedModule,
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -22,9 +26,9 @@ import { ShortUrlModule } from './short-url/short-url.module';
         secret: configService.getOrThrow('JWT_SECRET'),
       }),
     }),
-    ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
     ShortUrlModule,
+    RedirectModule,
   ],
   controllers: [AppController],
   providers: [AppService],

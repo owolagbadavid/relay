@@ -13,7 +13,7 @@ async function bootstrap() {
   const logger = new Logger('UrlGeneratorBootstrap');
   const grpcUrl = configService.get<string>('GRPC_URL') ?? '0.0.0.0:5001';
   const rmqUrl = configService.get<string>('RMQ_URL');
-  const port = Number(configService.get<string>('PORT') ?? 3000);
+  // const port = Number(configService.get<string>('URL_GEN_PORT') ?? 3001);
   const shortUrlProtoPath = join(__dirname, 'proto/shorturl.proto');
   const sharedProtoDir = join(process.cwd(), 'libs/shared/proto');
   const resolvedShortUrlProtoPath = existsSync(shortUrlProtoPath)
@@ -49,6 +49,6 @@ async function bootstrap() {
   }
 
   await app.startAllMicroservices();
-  await app.listen(port);
+  // await app.listen(port);
 }
 void bootstrap();

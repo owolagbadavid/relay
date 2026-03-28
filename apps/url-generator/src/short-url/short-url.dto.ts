@@ -1,5 +1,6 @@
 export class ShortUrlRequest {
   customUrl?: StringValue;
+  expiresIn!: number;
 }
 
 export class ShortUrlResponse {

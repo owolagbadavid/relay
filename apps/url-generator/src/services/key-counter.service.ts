@@ -11,8 +11,8 @@ export class KeyCounterService implements OnModuleDestroy {
     this.redis = new Redis({
       host: config.getOrThrow('REDIS_HOST'),
       port: +config.getOrThrow('REDIS_PORT'),
-      password: config.getOrThrow('REDIS_PASSWORD'),
-      username: config.getOrThrow('REDIS_USERNAME'),
+      password: config.get('REDIS_PASSWORD'),
+      username: config.get('REDIS_USERNAME'),
     });
   }
 

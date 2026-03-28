@@ -1,11 +1,81 @@
 import { RMQ, URL_GEN } from '@lib/shared/tokens';
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  OnModuleInit,
+} from '@nestjs/common';
 import type { ClientGrpc, ClientRMQ } from '@nestjs/microservices';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Observable, firstValueFrom } from 'rxjs';
+import { status as GrpcStatus } from '@grpc/grpc-js';
+import { UrlMapping } from '../schemas/url-mapping.schema';
+import { ReserveShortUrlDto } from './dto/reserve-short-url.dto';
+
+interface ShortUrlGrpcService {
+  getShortUrl(data: {
+    customUrl?: { value: string };
+    expiresIn: number;
+  }): Observable<{ id: number; shortUrl: string }>;
+}
 
 @Injectable()
-export class ShortUrlService {
+export class ShortUrlService implements OnModuleInit {
+  private grpcService!: ShortUrlGrpcService;
+
   constructor(
-    @Inject(URL_GEN) private urlGenClient: ClientGrpc,
-    @Inject(RMQ) private rmqClient: ClientRMQ,
+    @Inject(URL_GEN) private readonly urlGenClient: ClientGrpc,
+    @Inject(RMQ) private readonly rmqClient: ClientRMQ,
+    @InjectModel(UrlMapping.name)
+    private readonly urlMappingModel: Model<UrlMapping>,
   ) {}
+
+  onModuleInit() {
+    this.grpcService =
+      this.urlGenClient.getService<ShortUrlGrpcService>('ShortUrlService');
+  }
+
+  async reserve(
+    userId: string,
+    dto: ReserveShortUrlDto,
+  ): Promise<{ shortUrl: string }> {
+    const expiresInMs = dto.expiresIn.getTime();
+
+    let grpcResult: { id: number; shortUrl: string };
+
+    try {
+      grpcResult = await firstValueFrom(
+        this.grpcService.getShortUrl({
+          expiresIn: expiresInMs,
+          ...(dto.customUrl ? { customUrl: { value: dto.customUrl } } : {}),
+        }),
+      );
+    } catch (e: unknown) {
+      if ((e as { code?: number })?.code === GrpcStatus.ALREADY_EXISTS) {
+        throw new ConflictException('Short URL already in use');
+      }
+      throw new InternalServerErrorException('Failed to reserve short URL');
+    }
+
+    try {
+      await this.urlMappingModel.create({
+        user: userId,
+        longUrl: dto.longUrl,
+        shortUrl: grpcResult.shortUrl,
+        expiresIn: dto.expiresIn,
+      });
+    } catch {
+      this.rmqClient.emit('unreserve_short_url', {
+        id: grpcResult.id,
+        lockedUntilMs: expiresInMs,
+      });
+      throw new InternalServerErrorException(
+        'Failed to save URL mapping; reservation rolled back',
+      );
+    }
+
+    return { shortUrl: grpcResult.shortUrl };
+  }
 }

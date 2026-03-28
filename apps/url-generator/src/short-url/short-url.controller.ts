@@ -1,7 +1,12 @@
 import { ConflictException, Controller } from '@nestjs/common';
 import { ShortUrlService } from './short-url.service';
 import { ShortUrlRequest, ShortUrlResponse } from './short-url.dto';
-import { GrpcMethod, RpcException } from '@nestjs/microservices';
+import {
+  GrpcMethod,
+  MessagePattern,
+  Payload,
+  RpcException,
+} from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import { ShortUrl } from '../entities/shorturl.entity';
 
@@ -15,6 +20,7 @@ export class ShortUrlController {
 
     try {
       res = await this.shortUrlService.useShortUrlTransaction(
+        data.expiresIn,
         data.customUrl?.value,
       );
     } catch (e) {
@@ -29,7 +35,7 @@ export class ShortUrlController {
     if (!res) {
       throw new RpcException({
         code: status.ABORTED,
-        message: `Error`,
+        message: 'No available keys',
       });
     }
 
@@ -37,5 +43,12 @@ export class ShortUrlController {
       id: res.id,
       shortUrl: res.key,
     };
+  }
+
+  @MessagePattern('unreserve_short_url')
+  async unreserveShortUrl(
+    @Payload() data: { id: number; lockedUntilMs: number },
+  ): Promise<void> {
+    await this.shortUrlService.unreserve(data.id, data.lockedUntilMs);
   }
 }
