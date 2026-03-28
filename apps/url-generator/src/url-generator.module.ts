@@ -6,6 +6,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies/snake-naming.strategy';
 import { ShortUrlModule } from './short-url/short-url.module';
+import { ShortUrl } from './entities/shorturl.entity';
+import { TasksService } from './services/tasks.service';
+import { KeyCounterService } from './services/key-counter.service';
 
 @Module({
   imports: [
@@ -26,8 +29,9 @@ import { ShortUrlModule } from './short-url/short-url.module';
       }),
     }),
     ShortUrlModule,
+    TypeOrmModule.forFeature([ShortUrl]),
   ],
   controllers: [UrlGeneratorController],
-  providers: [UrlGeneratorService],
+  providers: [UrlGeneratorService, TasksService, KeyCounterService],
 })
 export class UrlGeneratorModule {}
