@@ -12,6 +12,11 @@ async function bootstrap() {
 
   app.use(cookieParser(configuration.getOrThrow('JWT_SECRET')));
 
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  });
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   const config = new DocumentBuilder()

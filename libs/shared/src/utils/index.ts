@@ -6,7 +6,7 @@ export function cookie(
   res: Response,
   key: string,
   val: string,
-  ttl: number = 3600,
+  ttl: number = 360000000,
 ) {
   res.cookie(key, val, {
     httpOnly: true,

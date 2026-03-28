@@ -1,4 +1,4 @@
-import { ConflictException, Controller } from '@nestjs/common';
+import { ConflictException, Controller, Logger } from '@nestjs/common';
 import { ShortUrlService } from './short-url.service';
 import { ShortUrlRequest, ShortUrlResponse } from './short-url.dto';
 import {
@@ -20,10 +20,11 @@ export class ShortUrlController {
 
     try {
       res = await this.shortUrlService.useShortUrlTransaction(
-        data.expiresIn,
+        Number(data.expiresIn),
         data.customUrl?.value,
       );
     } catch (e) {
+      Logger.error(e);
       if (e instanceof ConflictException) {
         throw new RpcException({
           code: status.ALREADY_EXISTS,

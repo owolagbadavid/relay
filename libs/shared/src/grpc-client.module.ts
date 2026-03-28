@@ -14,7 +14,7 @@ const client = ClientsModule.registerAsync([
     useFactory: (config: ConfigService) => ({
       transport: Transport.GRPC,
       options: {
-        url: config.getOrThrow<string>('GRPC_URL'),
+        url: config.getOrThrow<string>('GRPC_CLIENT_URL'),
         package: 'shorturl',
         protoPath: shortUrlProtoPath,
       },

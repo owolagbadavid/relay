@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsDate, IsOptional, IsString, IsUrl } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class ReserveShortUrlDto {
@@ -12,8 +12,8 @@ export class ReserveShortUrlDto {
   @ApiPropertyOptional()
   customUrl?: string;
 
-  @IsDateString()
   @Type(() => Date)
+  @IsDate()
   @ApiProperty({ description: 'ISO date string — when the short URL expires' })
   expiresIn!: Date;
 }

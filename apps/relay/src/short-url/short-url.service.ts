@@ -4,6 +4,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
   OnModuleInit,
 } from '@nestjs/common';
 import type { ClientGrpc, ClientRMQ } from '@nestjs/microservices';
@@ -56,6 +57,7 @@ export class ShortUrlService implements OnModuleInit {
       if ((e as { code?: number })?.code === GrpcStatus.ALREADY_EXISTS) {
         throw new ConflictException('Short URL already in use');
       }
+      Logger.log(e);
       throw new InternalServerErrorException('Failed to reserve short URL');
     }
 
