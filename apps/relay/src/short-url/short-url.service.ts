@@ -25,6 +25,7 @@ interface ShortUrlGrpcService {
 @Injectable()
 export class ShortUrlService implements OnModuleInit {
   private grpcService!: ShortUrlGrpcService;
+  private readonly logger = new Logger(ShortUrlService.name);
 
   constructor(
     @Inject(URL_GEN) private readonly urlGenClient: ClientGrpc,
@@ -54,10 +55,10 @@ export class ShortUrlService implements OnModuleInit {
         }),
       );
     } catch (e: unknown) {
+      this.logger.error(e);
       if ((e as { code?: number })?.code === GrpcStatus.ALREADY_EXISTS) {
         throw new ConflictException('Short URL already in use');
       }
-      Logger.log(e);
       throw new InternalServerErrorException('Failed to reserve short URL');
     }
 
@@ -68,7 +69,8 @@ export class ShortUrlService implements OnModuleInit {
         shortUrl: grpcResult.shortUrl,
         expiresIn: dto.expiresIn,
       });
-    } catch {
+    } catch (e: unknown) {
+      this.logger.error(e);
       this.rmqClient.emit('unreserve_short_url', {
         id: grpcResult.id,
         lockedUntilMs: expiresInMs,

@@ -12,6 +12,7 @@ import { ShortUrl } from '../entities/shorturl.entity';
 
 @Controller()
 export class ShortUrlController {
+  private logger: Logger = new Logger(ShortUrlController.name);
   constructor(private readonly shortUrlService: ShortUrlService) {}
 
   @GrpcMethod('ShortUrlService', 'GetShortUrl')
@@ -24,7 +25,7 @@ export class ShortUrlController {
         data.customUrl?.value,
       );
     } catch (e) {
-      Logger.error(e);
+      this.logger.error(e);
       if (e instanceof ConflictException) {
         throw new RpcException({
           code: status.ALREADY_EXISTS,
