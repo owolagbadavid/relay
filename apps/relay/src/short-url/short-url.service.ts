@@ -14,6 +14,7 @@ import { Observable, firstValueFrom } from 'rxjs';
 import { status as GrpcStatus } from '@grpc/grpc-js';
 import { UrlMapping } from '../schemas/url-mapping.schema';
 import { ReserveShortUrlDto } from './dto/reserve-short-url.dto';
+import { BasePaginateDto, PagedResultDto } from '@lib/shared/dtos';
 
 interface ShortUrlGrpcService {
   getShortUrl(data: {
@@ -81,5 +82,26 @@ export class ShortUrlService implements OnModuleInit {
     }
 
     return { shortUrl: grpcResult.shortUrl };
+  }
+
+  async findByUser(
+    userId: string,
+    dto: BasePaginateDto,
+  ): Promise<PagedResultDto<UrlMapping>> {
+    const filter = { user: userId };
+    const skip = (dto.page - 1) * dto.size;
+
+    const [items, count] = await Promise.all([
+      this.urlMappingModel
+        .find(filter)
+        .lean()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(dto.size)
+        .exec(),
+      this.urlMappingModel.countDocuments(filter).exec(),
+    ]);
+
+    return new PagedResultDto(items, dto.size, dto.page, count);
   }
 }
