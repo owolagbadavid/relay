@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
-import { RedirectController } from './redirect.controller';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AnalyticsService } from './analytics.service';
+import { ClickEvent, ClickEventSchema } from '../schemas/click-event.schema';
 import { UrlMapping, UrlMappingSchema } from '../schemas/url-mapping.schema';
-import { AnalyticsModule } from '../analytics/analytics.module';
 
 @Module({
-  controllers: [RedirectController],
   imports: [
-    AnalyticsModule,
     MongooseModule.forFeature([
+      { name: ClickEvent.name, schema: ClickEventSchema },
       { name: UrlMapping.name, schema: UrlMappingSchema },
     ]),
   ],
+  providers: [AnalyticsService],
+  exports: [AnalyticsService],
 })
-export class RedirectModule {}
+export class AnalyticsModule {}

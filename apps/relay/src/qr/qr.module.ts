@@ -1,16 +1,15 @@
 import { Module } from '@nestjs/common';
-import { RedirectController } from './redirect.controller';
 import { MongooseModule } from '@nestjs/mongoose';
+import { QrService } from './qr.service';
 import { UrlMapping, UrlMappingSchema } from '../schemas/url-mapping.schema';
-import { AnalyticsModule } from '../analytics/analytics.module';
 
 @Module({
-  controllers: [RedirectController],
   imports: [
-    AnalyticsModule,
     MongooseModule.forFeature([
       { name: UrlMapping.name, schema: UrlMappingSchema },
     ]),
   ],
+  providers: [QrService],
+  exports: [QrService],
 })
-export class RedirectModule {}
+export class QrModule {}

@@ -5,7 +5,7 @@ export type UrlMappingDocument = HydratedDocument<UrlMapping>;
 
 @Schema({ timestamps: true })
 export class UrlMapping {
-  @Prop({ type: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   user!: mongoose.Types.ObjectId;
 
   @Prop()
@@ -16,6 +16,9 @@ export class UrlMapping {
 
   @Prop({ type: Date, expires: 0 })
   expiresIn!: Date;
+
+  @Prop({ default: 0 })
+  clicks!: number;
 }
 
 export const UrlMappingSchema = SchemaFactory.createForClass(UrlMapping);

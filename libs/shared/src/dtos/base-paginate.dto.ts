@@ -1,8 +1,10 @@
 import { IsInt, IsOptional, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class BasePaginateDto {
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   @ApiProperty({
@@ -14,6 +16,7 @@ export class BasePaginateDto {
   size: number = 10;
 
   @IsOptional()
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   @ApiProperty({ type: Number, required: false })

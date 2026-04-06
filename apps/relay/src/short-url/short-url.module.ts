@@ -5,6 +5,8 @@ import { GrpcClientModule } from '@lib/shared/grpc-client.module';
 import { RmqClientModule } from '@lib/shared/rmq-client.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UrlMapping, UrlMappingSchema } from '../schemas/url-mapping.schema';
+import { AnalyticsModule } from '../analytics/analytics.module';
+import { QrModule } from '../qr/qr.module';
 
 @Module({
   controllers: [ShortUrlController],
@@ -12,6 +14,8 @@ import { UrlMapping, UrlMappingSchema } from '../schemas/url-mapping.schema';
   imports: [
     GrpcClientModule,
     RmqClientModule,
+    AnalyticsModule,
+    QrModule,
     MongooseModule.forFeature([
       { name: UrlMapping.name, schema: UrlMappingSchema },
     ]),
