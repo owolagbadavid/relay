@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -11,13 +12,22 @@ import {
 import type { Response } from 'express';
 import { ShortUrlService } from './short-url.service';
 import { ReserveShortUrlDto } from './dto/reserve-short-url.dto';
+import { ReserveShortUrlResponseDto } from './dto/reserve-short-url-response.dto';
 import { AnalyticsQueryDto } from './dto/analytics-query.dto';
+import { AnalyticsSummaryDto } from './dto/analytics-summary.dto';
 import { QrQueryDto } from './dto/qr-query.dto';
 import { JwtCookieAuthGuard } from '@lib/shared/guards/jwt-auth.guard';
 import { UserContext } from '@lib/shared/decorators/user-context.decorator';
+import {
+  ApiDataResponse,
+  ApiPaginatedDataResponse,
+} from '@lib/shared/decorators/api-response.decorator';
+import { ResponseHelper } from '@lib/shared/dtos/api-response.dto';
 import { BasePaginateDto, UserContextDto } from '@lib/shared/dtos';
 import { AnalyticsService } from '../analytics/analytics.service';
 import { QrService } from '../qr/qr.service';
+import { UrlMapping } from '../schemas/url-mapping.schema';
+import { ClickEvent } from '../schemas/click-event.schema';
 
 @Controller('short-url')
 export class ShortUrlController {
@@ -29,43 +39,55 @@ export class ShortUrlController {
 
   @Get()
   @UseGuards(JwtCookieAuthGuard)
-  findByUser(
+  @ApiPaginatedDataResponse(UrlMapping)
+  async findByUser(
     @Query() dto: BasePaginateDto,
     @UserContext() user: UserContextDto,
   ) {
-    return this.shortUrlService.findByUser(user.sub, dto);
+    return ResponseHelper.success(
+      await this.shortUrlService.findByUser(user.sub, dto),
+    );
   }
 
   @Post()
   @UseGuards(JwtCookieAuthGuard)
-  reserve(
+  @ApiDataResponse(ReserveShortUrlResponseDto, HttpStatus.CREATED)
+  async reserve(
     @Body() dto: ReserveShortUrlDto,
     @UserContext() user: UserContextDto,
   ) {
-    return this.shortUrlService.reserve(user.sub, dto);
+    return ResponseHelper.success(
+      await this.shortUrlService.reserve(user.sub, dto),
+    );
   }
 
   @Get(':shortUrl/analytics')
   @UseGuards(JwtCookieAuthGuard)
-  getAnalytics(
+  @ApiPaginatedDataResponse(ClickEvent)
+  async getAnalytics(
     @Param('shortUrl') shortUrl: string,
     @Query() dto: AnalyticsQueryDto,
     @UserContext() user: UserContextDto,
   ) {
-    return this.analyticsService.getClicksWithPagination(
-      shortUrl,
-      user.sub,
-      dto,
+    return ResponseHelper.success(
+      await this.analyticsService.getClicksWithPagination(
+        shortUrl,
+        user.sub,
+        dto,
+      ),
     );
   }
 
   @Get(':shortUrl/analytics/summary')
   @UseGuards(JwtCookieAuthGuard)
-  getAnalyticsSummary(
+  @ApiDataResponse(AnalyticsSummaryDto)
+  async getAnalyticsSummary(
     @Param('shortUrl') shortUrl: string,
     @UserContext() user: UserContextDto,
   ) {
-    return this.analyticsService.getSummary(shortUrl, user.sub);
+    return ResponseHelper.success(
+      await this.analyticsService.getSummary(shortUrl, user.sub),
+    );
   }
 
   @Get(':shortUrl/qr')
