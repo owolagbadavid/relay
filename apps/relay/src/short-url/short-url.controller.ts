@@ -9,6 +9,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 import type { Response } from 'express';
 import { ShortUrlService } from './short-url.service';
 import { ReserveShortUrlDto } from './dto/reserve-short-url.dto';
@@ -36,6 +37,13 @@ export class ShortUrlController {
     private readonly analyticsService: AnalyticsService,
     private readonly qrService: QrService,
   ) {}
+
+  @MessagePattern('verify_and_unreserve_short_url')
+  async verifyAndUnreserve(
+    @Payload() data: { id: number; shortUrl: string; lockedUntilMs: number },
+  ): Promise<void> {
+    await this.shortUrlService.verifyAndUnreserve(data);
+  }
 
   @Get()
   @UseGuards(JwtCookieAuthGuard)

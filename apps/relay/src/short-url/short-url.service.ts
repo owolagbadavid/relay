@@ -72,8 +72,9 @@ export class ShortUrlService implements OnModuleInit {
       });
     } catch (e: unknown) {
       this.logger.error(e);
-      this.rmqClient.emit('unreserve_short_url', {
+      this.rmqClient.emit('verify_and_unreserve_short_url', {
         id: grpcResult.id,
+        shortUrl: grpcResult.shortUrl,
         lockedUntilMs: expiresInMs,
       });
       throw new InternalServerErrorException(
@@ -82,6 +83,22 @@ export class ShortUrlService implements OnModuleInit {
     }
 
     return { shortUrl: grpcResult.shortUrl };
+  }
+
+  async verifyAndUnreserve(data: {
+    id: number;
+    shortUrl: string;
+    lockedUntilMs: number;
+  }): Promise<void> {
+    const exists = await this.urlMappingModel.exists({
+      shortUrl: data.shortUrl,
+    });
+    if (!exists) {
+      this.rmqClient.emit('unreserve_short_url', {
+        id: data.id,
+        lockedUntilMs: data.lockedUntilMs,
+      });
+    }
   }
 
   async findByUser(
