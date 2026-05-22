@@ -5,7 +5,7 @@ services:
       dockerfile: apps/relay/Dockerfile
       target: production
     env_file: .env
-    ports:
+    expose:
       - "3000:3000"
     depends_on:
       url-generator:
@@ -17,5 +17,5 @@ services:
       dockerfile: apps/url-generator/Dockerfile
       target: production
     env_file: .env
-    ports:
+    expose:
       - "5001:5001"
