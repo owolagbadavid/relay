@@ -14,7 +14,11 @@ async function bootstrap() {
   app.use(cookieParser(configuration.getOrThrow('JWT_SECRET')));
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:5173'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'https://relay.tobee.dev',
+    ],
     credentials: true,
   });
 
